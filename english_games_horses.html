@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Игровая «English for Riders» — 6 игр</title>
+<style>
+  :root{
+    --green:#2f7d4f; --greenDark:#1e5c38; --greenSoft:#e3f4e8;
+    --yellow:#ffb300; --orange:#ff8a3d; --red:#e0564b; --blue:#2f6fb2; --blueSoft:#e3effb;
+    --bg1:#dff1ff; --bg2:#eaffdd; --ink:#22313f; --card:#ffffff; --muted:#5c6b7a;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    color:var(--ink);
+    background:linear-gradient(160deg,var(--bg1) 0%,var(--bg2) 55%,#eaffdd 100%);
+    background-attachment:fixed; min-height:100vh;
+  }
+  .wrap{max-width:1000px;margin:0 auto;padding:14px 18px 40px;}
+
+  /* header */
+  .head{display:flex;align-items:center;gap:12px;margin-bottom:8px;}
+  .head .title{font-weight:800;font-size:22px;color:var(--greenDark);}
+  .head .sub{font-size:13px;color:var(--muted);margin-left:auto;}
+  .menu-btn{
+    border:none;cursor:pointer;font-weight:800;border-radius:999px;background:#fff;color:var(--greenDark);
+    font-size:15px;padding:9px 18px;box-shadow:0 0 0 2px var(--green) inset;
+  }
+  .menu-btn:active{transform:translateY(2px);}
+
+  /* views */
+  .view{display:none;}
+  .view.active{display:block;animation:fadeIn .4s ease;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+
+  .panel{background:var(--card);border-radius:24px;padding:22px 24px;box-shadow:0 10px 30px rgba(31,92,56,.14);border:2px solid #fff;}
+  .badge{display:inline-block;background:var(--yellow);color:#5a3a00;font-weight:800;padding:5px 13px;border-radius:999px;font-size:12.5px;letter-spacing:.5px;margin-bottom:10px;}
+  h1{font-size:32px;margin:6px 0 4px;color:var(--greenDark);line-height:1.1;}
+  h2{font-size:24px;margin:0 0 6px;color:var(--greenDark);}
+  .hint{font-size:16px;color:var(--muted);margin:6px 0 12px;}
+
+  /* menu cards */
+  .menu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:14px;}
+  .game-card{
+    background:var(--card);border:2px solid #fff;border-radius:22px;padding:20px;cursor:pointer;
+    box-shadow:0 8px 22px rgba(31,92,56,.12);transition:.15s;
+  }
+  .game-card:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(31,92,56,.18);}
+  .game-card .g-ic{font-size:44px;}
+  .game-card .g-t{font-weight:800;font-size:19px;color:var(--greenDark);margin:6px 0 4px;}
+  .game-card .g-d{font-size:14.5px;color:var(--muted);line-height:1.4;}
+  .game-card .g-tag{display:inline-block;margin-top:10px;font-size:12px;font-weight:800;color:#fff;background:var(--green);border-radius:999px;padding:4px 12px;}
+
+  /* buttons */
+  .btn{
+    display:inline-block;border:none;cursor:pointer;font-weight:800;border-radius:999px;
+    background:var(--green);color:#fff;font-size:18px;padding:12px 30px;margin:10px 4px 2px;
+    box-shadow:0 5px 0 var(--greenDark);transition:.12s;
+  }
+  .btn:active{transform:translateY(3px);box-shadow:0 2px 0 var(--greenDark);}
+  .btn.yellow{background:var(--yellow);color:#5a3a00;box-shadow:0 5px 0 #d99200;}
+  .btn.yellow:active{box-shadow:0 2px 0 #d99200;}
+  .btn.ghost{background:#fff;color:var(--greenDark);box-shadow:0 0 0 2px var(--green) inset;}
+  .btn.big{font-size:22px;padding:15px 40px;}
+  .btn:disabled{opacity:.4;cursor:default;}
+
+  .center{text-align:center;}
+
+  /* ---- QUIZ ---- */
+  .teams{display:flex;gap:10px;justify-content:center;margin:10px 0 4px;flex-wrap:wrap;}
+  .team-btn{
+    border:2px solid var(--greenSoft);background:#fff;border-radius:14px;padding:9px 16px;font-weight:800;
+    font-size:16px;cursor:pointer;color:var(--ink);transition:.15s;
+  }
+  .team-btn.on{background:var(--green);color:#fff;border-color:var(--green);}
+  .timer-wrap{height:16px;background:#eef4f1;border-radius:999px;overflow:hidden;margin:14px 0 8px;}
+  .timer-bar{height:100%;width:100%;background:var(--green);border-radius:999px;transition:width .1s linear;}
+  .timer-bar.low{background:var(--red);}
+  .timer-txt{font-size:14px;font-weight:800;color:var(--muted);text-align:center;margin-bottom:8px;}
+  .q-emoji{font-size:44px;text-align:center;}
+  .q-text{font-size:21px;font-weight:800;text-align:center;margin:8px 0 16px;}
+  .opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  @media(max-width:520px){.opts{grid-template-columns:1fr;}}
+  .opt{
+    border:2px solid var(--greenSoft);background:#fff;border-radius:14px;padding:14px;font-size:17px;
+    font-weight:700;cursor:pointer;color:var(--ink);transition:.15s;
+  }
+  .opt:hover{border-color:var(--green);}
+  .opt.correct{background:var(--greenSoft);border-color:var(--green);color:var(--greenDark);}
+  .opt.wrong{background:#fdecea;border-color:var(--red);color:var(--red);}
+  .q-feedback{font-size:17px;font-weight:800;text-align:center;margin-top:12px;min-height:24px;}
+  .q-feedback.good{color:var(--greenDark);} .q-feedback.bad{color:var(--red);}
+
+  /* ---- HANGMAN ---- */
+  .hg-word{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:14px 0;}
+  .hg-letter{
+    width:40px;height:48px;border-bottom:4px solid var(--greenDark);font-size:30px;font-weight:800;
+    display:flex;align-items:flex-end;justify-content:center;color:var(--greenDark);
+  }
+  .hg-hint{text-align:center;font-size:16px;color:var(--muted);}
+  .hg-lives{text-align:center;font-size:24px;letter-spacing:3px;margin:8px 0;}
+  .hg-wrong{text-align:center;font-size:16px;color:var(--red);min-height:22px;font-weight:700;}
+  .keys{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:12px;max-width:560px;margin-left:auto;margin-right:auto;}
+  .key{
+    width:36px;height:40px;border-radius:8px;border:2px solid var(--greenSoft);background:#fff;font-weight:800;
+    font-size:16px;cursor:pointer;color:var(--ink);transition:.12s;
+  }
+  .key.used{opacity:.25;cursor:default;}
+  .key:active{transform:scale(.92);}
+
+  /* ---- MEMORY ---- */
+  .mem-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:520px;margin:14px auto;}
+  @media(max-width:480px){.mem-grid{grid-template-columns:repeat(3,1fr);}}
+  .mem-card{perspective:800px;cursor:pointer;height:110px;}
+  .mem-inner{position:relative;width:100%;height:100%;transition:transform .45s;transform-style:preserve-3d;}
+  .mem-card.flipped .mem-inner, .mem-card.solved .mem-inner{transform:rotateY(180deg);}
+  .mem-face{position:absolute;inset:0;border-radius:14px;backface-visibility:hidden;display:flex;align-items:center;justify-content:center;font-weight:800;}
+  .mem-front{background:linear-gradient(150deg,var(--green),var(--greenDark));color:#fff;font-size:30px;}
+  .mem-back{background:#f6faf7;border:2px solid var(--greenSoft);transform:rotateY(180deg);font-size:30px;}
+  .mem-back.word{font-size:17px;color:var(--greenDark);text-align:center;padding:4px;}
+  .mem-stats{text-align:center;font-size:15px;font-weight:700;color:var(--muted);}
+
+  /* ---- WHEEL ---- */
+  .wheel-area{display:flex;flex-direction:column;align-items:center;margin:10px 0;}
+  .wheel-stage{position:relative;width:270px;height:270px;margin:6px 0 2px;}
+  .pointer{position:absolute;top:-14px;left:50%;transform:translateX(-50%);z-index:5;width:0;height:0;
+    border-left:16px solid transparent;border-right:16px solid transparent;border-top:26px solid var(--red);}
+  #wheel{
+    width:270px;height:270px;border-radius:50%;border:8px solid #fff;box-shadow:0 6px 22px rgba(31,92,56,.25);
+    background:conic-gradient(#2f7d4f 0 45deg,#ffb300 45deg 90deg,#2f7d4f 90deg 135deg,#ffb300 135deg 180deg,
+                #2f7d4f 180deg 225deg,#ffb300 225deg 270deg,#2f7d4f 270deg 315deg,#ffb300 315deg 360deg);
+    transition:transform 3.8s cubic-bezier(.12,.8,.15,1);
+    position:relative;
+  }
+  .wheel-label{position:absolute;left:50%;top:50%;width:0;height:0;font-size:15px;font-weight:800;color:#fff;
+    text-shadow:0 1px 2px rgba(0,0,0,.35);}
+  .wheel-hub{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:52px;height:52px;border-radius:50%;background:#fff;color:var(--greenDark);font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.1;}
+  .wheel-score{font-size:18px;font-weight:800;color:var(--greenDark);margin-top:8px;}
+  .wheel-pop{text-align:center;background:#f6faf7;border:2px solid var(--greenSoft);border-radius:16px;padding:16px;margin-top:12px;min-height:60px;}
+  .wheel-pop .wp-task{font-size:20px;font-weight:800;color:var(--greenDark);}
+
+  /* ---- WORD SEARCH ---- */
+  .ws-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;max-width:480px;margin:14px auto;}
+  .ws-cell{
+    aspect-ratio:1;border:1.5px solid var(--greenSoft);background:#fff;border-radius:5px;font-weight:800;
+    font-size:16px;cursor:pointer;color:var(--ink);transition:.1s;
+  }
+  .ws-cell.sel{background:var(--yellow);border-color:#d99200;}
+  .ws-cell.found{background:var(--greenSoft);border-color:var(--green);color:var(--greenDark);}
+  .ws-list{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0;}
+  .ws-word{font-weight:800;padding:6px 14px;border-radius:999px;background:#f6faf7;border:2px solid var(--greenSoft);font-size:15px;color:var(--ink);}
+  .ws-word.found{background:var(--green);color:#fff;border-color:var(--green);text-decoration:line-through;}
+  .ws-msg{text-align:center;font-weight:800;min-height:22px;font-size:16px;}
+
+  /* ---- REVEAL ---- */
+  .reveal-box{position:relative;width:300px;height:300px;margin:14px auto;border-radius:16px;overflow:hidden;box-shadow:0 8px 24px rgba(31,92,56,.2);}
+  .reveal-emoji{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:140px;}
+  .reveal-tile{position:absolute;width:33.34%;height:33.34%;background:var(--green);border:2px solid #fff;cursor:pointer;transition:.2s;}
+  .reveal-tile:hover{background:var(--greenDark);}
+  .reveal-tile.hidden{opacity:0;pointer-events:none;}
+  .reveal-round{text-align:center;font-weight:800;color:var(--muted);font-size:15px;}
+  .reveal-score{text-align:center;font-weight:800;font-size:18px;color:var(--greenDark);margin-top:4px;}
+
+  .foot{text-align:center;font-size:12.5px;color:var(--muted);margin-top:22px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="head">
+    <span class="title">🐎 Игровая «English for Riders»</span>
+    <button class="menu-btn" id="menuTop" style="display:none;" onclick="go('home')">← Меню</button>
+    <span class="sub">6 игр · конный спорт · английский</span>
+  </div>
+
+  <!-- ============ HOME ============ -->
+  <div class="view active" id="home">
+    <div class="panel center">
+      <span class="badge">Интерактивные игры</span>
+      <h1>Выбирай игру! 🎮</h1>
+      <p class="hint">Все игры на английском про лошадей и спорт. Играйте под руководством педагога.</p>
+    </div>
+    <div class="menu-grid">
+      <div class="game-card" onclick="go('quiz')">
+        <div class="g-ic">⏱️</div>
+        <div class="g-t">Викторина с таймером</div>
+        <div class="g-d">10 вопросов, 15 секунд на ответ, счёт двух команд на экране.</div>
+        <div class="g-tag">Командная</div>
+      </div>
+      <div class="game-card" onclick="go('hangman')">
+        <div class="g-ic">🔤</div>
+        <div class="g-t">Угадай слово по буквам</div>
+        <div class="g-d">Отгадываем конные слова по буквам. Подсказка — перевод.</div>
+        <div class="g-tag">Правописание</div>
+      </div>
+      <div class="game-card" onclick="go('memory')">
+        <div class="g-ic">🧩</div>
+        <div class="g-t">Memory — найди пару</div>
+        <div class="g-d">Парные карточки: слово ↔ картинка. Тренируем память.</div>
+        <div class="g-tag">Слова</div>
+      </div>
+      <div class="game-card" onclick="go('wheel')">
+        <div class="g-ic">🎡</div>
+        <div class="g-t">Колесо фортуны</div>
+        <div class="g-d">Крути колесо — выпадает слово или задание. Есть бонусы!</div>
+        <div class="g-tag">Сюрприз</div>
+      </div>
+      <div class="game-card" onclick="go('wordsearch')">
+        <div class="g-ic">🔍</div>
+        <div class="g-t">Филворд</div>
+        <div class="g-d">Найди спрятанные английские слова в сетке букв.</div>
+        <div class="g-tag">Внимание</div>
+      </div>
+      <div class="game-card" onclick="go('reveal')">
+        <div class="g-ic">🖼️</div>
+        <div class="g-t">Что за картинкой?</div>
+        <div class="g-d">Картинка открывается по квадратикам. Угадай слово раньше всех!</div>
+        <div class="g-tag">Угадайка</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ QUIZ ============ -->
+  <div class="view" id="quiz">
+    <div class="panel">
+      <span class="badge">Викторина с таймером ⏱️</span>
+      <h2>Чья команда быстрее? 🏆</h2>
+      <p class="hint">Выбери команду, которая отвечает, и жми на правильный ответ. 15 секунд на вопрос!</p>
+      <div class="teams">
+        <button class="team-btn on" id="team1btn" onclick="setTeam(0)">🐴 Команда 1: <span id="team1score">0</span></button>
+        <button class="team-btn" id="team2btn" onclick="setTeam(1)">🐎 Команда 2: <span id="team2score">0</span></button>
+      </div>
+      <div class="timer-wrap"><div class="timer-bar" id="timerBar"></div></div>
+      <div class="timer-txt" id="timerTxt">15</div>
+      <div id="quizBody"></div>
+    </div>
+  </div>
+
+  <!-- ============ HANGMAN ============ -->
+  <div class="view" id="hangman">
+    <div class="panel">
+      <span class="badge">Угадай слово по буквам 🔤</span>
+      <h2>Собери слово! 🐴</h2>
+      <p class="hint">Выбирай буквы. Подсказка — перевод слова. Ошибки забирают жизни ❤️</p>
+      <div class="hg-lives" id="hgLives"></div>
+      <div class="hg-word" id="hgWord"></div>
+      <div class="hg-hint">Подсказка: <b id="hgHint"></b></div>
+      <div class="hg-wrong" id="hgWrong"></div>
+      <div class="keys" id="hgKeys"></div>
+      <div class="center"><button class="btn" onclick="hangmanNew()">Новое слово ↺</button></div>
+    </div>
+  </div>
+
+  <!-- ============ MEMORY ============ -->
+  <div class="view" id="memory">
+    <div class="panel">
+      <span class="badge">Memory 🧩</span>
+      <h2>Найди пару: слово ↔ картинка</h2>
+      <p class="hint">Открывай по две карточки. Пара — это английское слово и его картинка.</p>
+      <div class="mem-grid" id="memGrid"></div>
+      <div class="mem-stats" id="memStats"></div>
+      <div class="center"><button class="btn" onclick="memoryStart()">Перемешать и начать ↺</button></div>
+    </div>
+  </div>
+
+  <!-- ============ WHEEL ============ -->
+  <div class="view" id="wheel">
+    <div class="panel center">
+      <span class="badge">Колесо фортуны 🎡</span>
+      <h2>Крути колесо!</h2>
+      <p class="hint">Выпадет слово — выполни задание (скажи перевод, покажи действие, составь фразу).</p>
+      <div class="wheel-area">
+        <div class="wheel-stage">
+          <div class="pointer"></div>
+          <div id="wheel"><div class="wheel-hub">GO!<br>🐎</div></div>
+        </div>
+      </div>
+      <button class="btn yellow big" id="spinBtn" onclick="spinWheel()">Крутить! 🎡</button>
+      <div class="wheel-score">Очки: <span id="wheelScore">0</span> <button class="btn ghost" style="font-size:14px;padding:6px 14px;" onclick="addPoint()">+1 за задание</button></div>
+      <div class="wheel-pop" id="wheelPop"><div class="wp-task">Нажми «Крутить!»</div></div>
+    </div>
+  </div>
+
+  <!-- ============ WORD SEARCH ============ -->
+  <div class="view" id="wordsearch">
+    <div class="panel">
+      <span class="badge">Филворд 🔍</span>
+      <h2>Найди спрятанные слова</h2>
+      <p class="hint">Слова спрятаны по горизонтали и вертикали. Нажми на первую букву, потом на последнюю.</p>
+      <div class="ws-list" id="wsList"></div>
+      <div class="ws-grid" id="wsGrid"></div>
+      <div class="ws-msg" id="wsMsg"></div>
+      <div class="center"><button class="btn" onclick="wsStart()">Новый филворд ↺</button></div>
+    </div>
+  </div>
+
+  <!-- ============ REVEAL ============ -->
+  <div class="view" id="reveal">
+    <div class="panel">
+      <span class="badge">Что за картинкой? 🖼️</span>
+      <h2>Угадай, кто (что) спряталось</h2>
+      <p class="hint">Открывай квадратики по одному. Угадаешь раньше — получишь больше очков!</p>
+      <div class="reveal-round" id="revRound"></div>
+      <div class="reveal-box" id="revBox"></div>
+      <div class="reveal-score">Очки: <span id="revScore">0</span></div>
+      <div class="opts" id="revOpts" style="max-width:520px;margin:10px auto;"></div>
+      <div class="q-feedback" id="revFeedback"></div>
+      <div class="center" id="revNext" style="display:none;"><button class="btn yellow" onclick="revNextRound()">Дальше →</button></div>
+    </div>
+  </div>
+
+  <div class="foot">Игровая для урока английского · отделение конного спорта · 8–10 лет</div>
+</div>
+
+<script>
+/* ================= SOUND ================= */
+let actx=null;
+function snd(){
+  if(!actx){ try{ actx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} }
+  if(actx && actx.state==='suspended') actx.resume();
+  return actx;
+}
+function tone(freq,dur,type,gain,when){
+  const c=snd(); if(!c) return;
+  const o=c.createOscillator(), g=c.createGain();
+  o.type=type; o.frequency.value=freq; o.connect(g); g.connect(c.destination);
+  const t=c.currentTime+(when||0);
+  g.gain.setValueAtTime(0.0001,t);
+  g.gain.exponentialRampToValueAtTime(gain,t+0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.start(t); o.stop(t+dur+0.05);
+}
+function sndGood(){ tone(660,.12,'sine',.25,0); tone(880,.2,'sine',.25,.1); }
+function sndBad(){ tone(200,.28,'sawtooth',.14,0); }
+function sndPop(){ tone(520,.08,'triangle',.2,0); tone(700,.1,'triangle',.2,.07); }
+
+/* ================= NAV ================= */
+const views=['home','quiz','hangman','memory','wheel','wordsearch','reveal'];
+function go(id){
+  views.forEach(v=> document.getElementById(v).classList.toggle('active', v===id));
+  document.getElementById('menuTop').style.display = (id==='home') ? 'none' : 'inline-block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ================= QUIZ ================= */
+const QUIZ=[
+  {e:'🐎', q:'Как по-английски «лошадь»?', o:['horse','pony','medal'], a:0},
+  {e:'🏇', q:'Что значит слово «rider»?', o:['всадник','лошадь','шлем'], a:0},
+  {e:'🐎💨', q:'«Jump» — это…', o:['конюшня','седло','прыжок'], a:2},
+  {e:'🥇', q:'Как по-английски «медаль»?', o:['medal','saddle','stable'], a:0},
+  {e:'🐴', q:'«Bridle» — это…', o:['уздечка','шлем','манеж'], a:0},
+  {e:'🪑', q:'Как по-английски «седло»?', o:['saddle','bridle','helmet'], a:0},
+  {e:'🏠', q:'«Stable» — это…', o:['конюшня','манеж','морковка'], a:0},
+  {e:'🏁', q:'Лошадь бежит галопом — это…', o:['gallop','walk','sleep'], a:0},
+  {e:'🥕', q:'Как по-английски «морковка»?', o:['carrot','brush','flag'], a:0},
+  {e:'🏆', q:'«Winner» — это…', o:['победитель','всадник','судья'], a:0}
+];
+let qTeams=[0,0], qTeam=0, qIdx=0, qTimer=null, qLeft=15;
+function setTeam(i){
+  qTeam=i;
+  document.getElementById('team1btn').classList.toggle('on', i===0);
+  document.getElementById('team2btn').classList.toggle('on', i===1);
+}
+function quizRender(){
+  const it=QUIZ[qIdx], box=document.getElementById('quizBody');
+  box.innerHTML='<div class="q-emoji">'+it.e+'</div><div class="q-text">'+it.q+'</div>';
+  const opts=document.createElement('div'); opts.className='opts';
+  it.o.forEach((o,oi)=>{
+    const b=document.createElement('button'); b.className='opt'; b.textContent=o;
+    b.onclick=()=>quizAnswer(oi,b,box);
+    opts.appendChild(b);
+  });
+  box.appendChild(opts);
+  const fb=document.createElement('div'); fb.className='q-feedback'; box.appendChild(fb);
+  startTimer();
+}
+function startTimer(){
+  clearInterval(qTimer); qLeft=15;
+  const bar=document.getElementById('timerBar'), txt=document.getElementById('timerTxt');
+  bar.classList.remove('low'); bar.style.width='100%'; txt.textContent='15';
+  qTimer=setInterval(()=>{
+    qLeft-=0.1;
+    if(qLeft<=0){ qLeft=0; clearInterval(qTimer); quizTimeout(); return; }
+    bar.style.width=(qLeft/15*100)+'%';
+    if(qLeft<5) bar.classList.add('low');
+    txt.textContent=Math.ceil(qLeft);
+  },100);
+}
+function quizTimeout(){
+  const box=document.getElementById('quizBody');
+  const fb=box.querySelector('.q-feedback');
+  fb.textContent='⏰ Время вышло!'; fb.className='q-feedback bad';
+  box.querySelectorAll('.opt')[QUIZ[qIdx].a].classList.add('correct');
+  box.querySelectorAll('.opt').forEach(o=>o.disabled=true);
+  sndBad();
+  setTimeout(quizNext,1500);
+}
+function quizAnswer(oi,btn,box){
+  clearInterval(qTimer);
+  const it=QUIZ[qIdx], fb=box.querySelector('.q-feedback');
+  box.querySelectorAll('.opt').forEach(o=>o.disabled=true);
+  if(oi===it.a){
+    btn.classList.add('correct'); fb.textContent='Правильно! 🎉'; fb.className='q-feedback good';
+    qTeams[qTeam]++; sndGood();
+  } else {
+    btn.classList.add('wrong');
+    box.querySelectorAll('.opt')[it.a].classList.add('correct');
+    fb.textContent='Ой! Правильный ответ выделен зелёным. 💪'; fb.className='q-feedback bad';
+    sndBad();
+  }
+  updateTeamScores();
+  setTimeout(quizNext,1500);
+}
+function quizNext(){
+  qIdx++;
+  if(qIdx>=QUIZ.length){
+    clearInterval(qTimer);
+    const box=document.getElementById('quizBody');
+    const t1=qTeams[0], t2=qTeams[1];
+    let msg = t1===t2 ? 'Ничья! Обе команды молодцы! 🤝' : (t1>t2?'Победа Команды 1! 🐴':'Победа Команды 2! 🐎');
+    box.innerHTML='<div class="q-emoji">🏆</div><div class="q-text">'+msg+'</div>'
+      +'<div class="center"><b>Счёт: '+t1+' : '+t2+'</b></div>'
+      +'<div class="center"><button class="btn yellow" onclick="quizRestart()">Играть снова ↺</button></div>';
+    document.getElementById('timerBar').style.width='0%';
+    document.getElementById('timerTxt').textContent='Готово!';
+    return;
+  }
+  quizRender();
+}
+function quizRestart(){
+  qTeams=[0,0]; qIdx=0; qTeam=0;
+  setTeam(0); updateTeamScores();
+  quizRender();
+}
+function updateTeamScores(){
+  document.getElementById('team1score').textContent=qTeams[0];
+  document.getElementById('team2score').textContent=qTeams[1];
+}
+
+/* ================= HANGMAN ================= */
+const HG_WORDS=[
+  ['horse','лошадь'],['saddle','седло'],['bridle','уздечка'],['helmet','шлем'],
+  ['stable','конюшня'],['arena','манеж'],['medal','медаль'],['carrot','морковка'],
+  ['gallop','галоп'],['winner','победитель'],['jump','прыжок'],['rider','всадник']
+];
+let hgWord='', hgLives=6, hgGuessed=[];
+function hangmanNew(){
+  const pick=HG_WORDS[Math.floor(Math.random()*HG_WORDS.length)];
+  hgWord=pick[0].toLowerCase(); hgLives=6; hgGuessed=[];
+  document.getElementById('hgHint').textContent=pick[1];
+  document.getElementById('hgWrong').textContent='';
+  hangmanDraw();
+}
+function hangmanDraw(){
+  document.getElementById('hgLives').textContent='❤️'.repeat(hgLives)+'🖤'.repeat(6-hgLives);
+  const w=document.getElementById('hgWord'); w.innerHTML='';
+  let done=true;
+  for(const ch of hgWord){
+    const d=document.createElement('div'); d.className='hg-letter';
+    d.textContent = hgGuessed.includes(ch) ? ch.toUpperCase() : '';
+    if(!hgGuessed.includes(ch)) done=false;
+    w.appendChild(d);
+  }
+  const keys=document.getElementById('hgKeys'); keys.innerHTML='';
+  for(let i=0;i<26;i++){
+    const L=String.fromCharCode(97+i);
+    const k=document.createElement('button'); k.className='key'+(hgGuessed.includes(L)?' used':''); k.textContent=L.toUpperCase();
+    k.onclick=()=>hangmanGuess(L,k);
+    keys.appendChild(k);
+  }
+  if(done){ sndGood(); document.getElementById('hgWrong').textContent='Молодец! Слово угадано! 🎉'; }
+}
+function hangmanGuess(L,k){
+  if(hgGuessed.includes(L) || hgLives<=0) return;
+  const w=document.getElementById('hgWord');
+  if(w.textContent.includes('угадано')) return;
+  hgGuessed.push(L); k.classList.add('used');
+  if(!hgWord.includes(L)){
+    hgLives--; sndBad();
+    if(hgLives<=0){
+      document.getElementById('hgWrong').textContent='Ой! Это было слово: '+hgWord.toUpperCase();
+      hangmanDraw(); return;
+    }
+  } else { sndPop(); }
+  hangmanDraw();
+}
+
+/* ================= MEMORY ================= */
+const MEM_PAIRS=[
+  ['horse','🐎'],['rider','🏇'],['helmet','⛑️'],['medal','🥇'],['carrot','🥕'],['flag','🚩']
+];
+let memCards=[], memOpen=[], memLock=false, memSolved=0, memMoves=0;
+function memoryStart(){
+  memCards=[];
+  MEM_PAIRS.forEach(p=>{
+    memCards.push({id:p[0]+'w', pair:p[0], type:'word', content:p[0]});
+    memCards.push({id:p[0]+'p', pair:p[0], type:'pic', content:p[1]});
+  });
+  // shuffle
+  for(let i=memCards.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [memCards[i],memCards[j]]=[memCards[j],memCards[i]]; }
+  memOpen=[]; memLock=false; memSolved=0; memMoves=0;
+  memoryDraw();
+}
+function memoryDraw(){
+  const g=document.getElementById('memGrid'); g.innerHTML='';
+  memCards.forEach((c,i)=>{
+    const d=document.createElement('div'); d.className='mem-card'+(c.solved?' solved':''); 
+    d.innerHTML='<div class="mem-inner"><div class="mem-face mem-front">🐎</div><div class="mem-face mem-back '+(c.type==='word'?'word':'')+'">'+c.content+'</div></div>';
+    d.onclick=()=>memoryFlip(i,d);
+    g.appendChild(d);
+  });
+  document.getElementById('memStats').textContent='Пары: '+memSolved+' / '+MEM_PAIRS.length+' · Ходы: '+memMoves;
+}
+function memoryFlip(i,d){
+  if(memLock || d.classList.contains('flipped') || d.classList.contains('solved')) return;
+  d.classList.add('flipped'); memOpen.push({i, el:d});
+  if(memOpen.length===2){
+    memMoves++;
+    const a=memCards[memOpen[0].i], b=memCards[memOpen[1].i];
+    if(a.pair===b.pair && a.type!==b.type){
+      memLock=true;
+      setTimeout(()=>{
+        memOpen.forEach(m=>{ m.el.classList.remove('flipped'); m.el.classList.add('solved'); memCards[m.i].solved=true; });
+        memSolved++; sndGood(); memLock=false; memOpen=[];
+        memoryDraw();
+        if(memSolved===MEM_PAIRS.length){ document.getElementById('memStats').textContent='Победа! Все пары найдены за '+memMoves+' ходов! 🏆'; }
+      },350);
+    } else {
+      memLock=true; sndBad();
+      setTimeout(()=>{
+        memOpen.forEach(m=>m.el.classList.remove('flipped'));
+        memLock=false; memOpen=[];
+        memoryDraw();
+      },800);
+    }
+  }
+}
+
+/* ================= WHEEL ================= */
+const WHEEL_TASKS=[
+  {label:'HORSE', task:'🐎 Скажи перевод: HORSE'},
+  {label:'JUMP', task:'🐎💨 Покажи действие: JUMP (прыгай!)'},
+  {label:'MEDAL', task:'🥇 Составь фразу со словом: MEDAL'},
+  {label:'CARROT', task:'🥕 Скажи перевод: CARROT'},
+  {label:'HELMET', task:'⛑️ Покажи на себе: HELMET'},
+  {label:'RIDER', task:'🏇 Составь фразу со словом: RIDER'},
+  {label:'⭐ БОНУС', task:'⭐ Счастливый бонус! +1 очко 🎉', bonus:1},
+  {label:'🎉 СУПЕР', task:'🎉 СУПЕР-БОНУС! +2 очка 🏆', bonus:2}
+];
+let wheelRot=0, wheelScore=0, spinning=false;
+function wheelBuild(){
+  const w=document.getElementById('wheel');
+  // remove old labels except hub
+  w.querySelectorAll('.wheel-label').forEach(x=>x.remove());
+  for(let i=0;i<8;i++){
+    const s=document.createElement('span'); s.className='wheel-label';
+    s.textContent=WHEEL_TASKS[i].label;
+    const ang=i*45+22.5;
+    s.style.transform='rotate('+ang+'deg) translateY(-98px)';
+    s.style.transformOrigin='center';
+    w.appendChild(s);
+  }
+}
+function spinWheel(){
+  if(spinning) return;
+  spinning=true; sndPop();
+  const target=Math.floor(Math.random()*8);
+  const segCenter=target*45+22.5;
+  const extra=360*(4+Math.floor(Math.random()*3));
+  const final=wheelRot - ((wheelRot%360)) + extra + (360-segCenter);
+  wheelRot=final;
+  const w=document.getElementById('wheel');
+  w.style.transform='rotate('+final+'deg)';
+  document.getElementById('wheelPop').innerHTML='<div class="wp-task">Крутится… 🎡</div>';
+}
+document.getElementById('wheel').addEventListener('transitionend', function(e){
+  if(e.propertyName!=='transform') return;
+  spinning=false;
+  const seg=Math.floor(((360 - (wheelRot%360))%360)/45)%8;
+  const t=WHEEL_TASKS[seg];
+  let html='<div class="wp-task">'+t.task+'</div>';
+  if(t.bonus){ wheelScore+=t.bonus; sndGood(); html+='<div style="margin-top:6px;color:var(--greenDark);font-weight:800;">+'+t.bonus+' очко! 🎉</div>'; }
+  else { sndPop(); html+='<div style="margin-top:6px;color:var(--muted);font-size:14px;">Выполни задание и нажми «+1 за задание»</div>'; }
+  document.getElementById('wheelPop').innerHTML=html;
+  document.getElementById('wheelScore').textContent=wheelScore;
+});
+function addPoint(){ wheelScore++; sndGood(); document.getElementById('wheelScore').textContent=wheelScore; }
+
+/* ================= WORD SEARCH ================= */
+const WS_WORDS=['HORSE','SADDLE','BRIDLE','HELMET','STABLE','ARENA','MEDAL','CARROT'];
+const WS_SIZE=10;
+let wsGrid=[], wsFound=[], wsSel=null;
+function wsMakeGrid(){
+  wsGrid=Array.from({length:WS_SIZE},()=>Array(WS_SIZE).fill(''));
+  for(const word of WS_WORDS){
+    let placed=false;
+    for(let attempt=0; attempt<300 && !placed; attempt++){
+      const horiz=Math.random()<0.5;
+      const r=Math.floor(Math.random()*WS_SIZE), c=Math.floor(Math.random()*WS_SIZE), len=word.length;
+      if(horiz){
+        if(c+len>WS_SIZE) continue;
+        let ok=true; for(let i=0;i<len;i++){ const ch=wsGrid[r][c+i]; if(ch!==''&&ch!==word[i]){ok=false;break;} }
+        if(!ok) continue;
+        for(let i=0;i<len;i++) wsGrid[r][c+i]=word[i];
+        placed=true;
+      } else {
+        if(r+len>WS_SIZE) continue;
+        let ok=true; for(let i=0;i<len;i++){ const ch=wsGrid[r+i][c]; if(ch!==''&&ch!==word[i]){ok=false;break;} }
+        if(!ok) continue;
+        for(let i=0;i<len;i++) wsGrid[r+i][c]=word[i];
+        placed=true;
+      }
+    }
+    if(!placed){
+      // deterministic fallback: scan rows then cols
+      outer: for(let r=0;r<WS_SIZE;r++){
+        for(let c=0;c+word.length<=WS_SIZE;c++){
+          let ok=true; for(let i=0;i<word.length;i++){ const ch=wsGrid[r][c+i]; if(ch!==''&&ch!==word[i]){ok=false;break;} }
+          if(ok){ for(let i=0;i<word.length;i++) wsGrid[r][c+i]=word[i]; placed=true; break outer; }
+        }
+      }
+    }
+  }
+  for(let r=0;r<WS_SIZE;r++) for(let c=0;c<WS_SIZE;c++) if(wsGrid[r][c]==='') wsGrid[r][c]=String.fromCharCode(65+Math.floor(Math.random()*26));
+}
+function wsStart(){
+  wsMakeGrid(); wsFound=[]; wsSel=null;
+  document.getElementById('wsMsg').textContent='';
+  wsDrawList(); wsDrawGrid();
+}
+function wsDrawList(){
+  const l=document.getElementById('wsList'); l.innerHTML='';
+  WS_WORDS.forEach(w=>{
+    const s=document.createElement('span'); s.className='ws-word'+(wsFound.includes(w)?' found':'');
+    s.textContent=w; l.appendChild(s);
+  });
+}
+function wsDrawGrid(){
+  const g=document.getElementById('wsGrid'); g.innerHTML='';
+  for(let r=0;r<WS_SIZE;r++) for(let c=0;c<WS_SIZE;c++){
+    const b=document.createElement('button'); b.className='ws-cell'; b.textContent=wsGrid[r][c];
+    b.onclick=()=>wsClick(r,c,b);
+    g.appendChild(b);
+  }
+}
+function wsClick(r,c,btn){
+  if(wsFound.length===WS_WORDS.length) return;
+  if(!wsSel){
+    wsSel={r,c,el:btn};
+    btn.classList.add('sel');
+    return;
+  }
+  const f=wsSel; wsSel=null;
+  f.el.classList.remove('sel');
+  let cells=[], word='';
+  if(f.r===r){
+    const lo=Math.min(f.c,c), hi=Math.max(f.c,c);
+    for(let cc=lo;cc<=hi;cc++){ cells.push([r,cc]); word+=wsGrid[r][cc]; }
+  } else if(f.c===c){
+    const lo=Math.min(f.r,r), hi=Math.max(f.r,r);
+    for(let rr=lo;rr<=hi;rr++){ cells.push([rr,c]); word+=wsGrid[rr][c]; }
+  } else {
+    document.getElementById('wsMsg').textContent='Слова — только по прямой! ↕️↔️';
+    return;
+  }
+  const rev=word.split('').reverse().join('');
+  const hit=WS_WORDS.find(w=>!wsFound.includes(w) && (w===word||w===rev));
+  const msg=document.getElementById('wsMsg');
+  if(hit){
+    wsFound.push(hit); sndGood();
+    msg.textContent='Найдено: '+hit+'! 🎉 ('+wsFound.length+'/'+WS_WORDS.length+')';
+    // highlight cells
+    const grid=document.getElementById('wsGrid').children;
+    cells.forEach(([rr,cc])=>{ grid[rr*WS_SIZE+cc].classList.add('found'); });
+    wsDrawList();
+    if(wsFound.length===WS_WORDS.length){
+      msg.textContent='Ты нашёл все слова! Победа! 🏆';
+      sndGood();
+    }
+  } else {
+    sndBad();
+    msg.textContent='Не нашёл — попробуй ещё! 💪';
+  }
+}
+
+/* ================= REVEAL ================= */
+const REVEAL_ITEMS=[
+  {emoji:'🐎', word:'horse', o:['horse','pony','rider','medal'], a:0},
+  {emoji:'🏇', word:'rider', o:['horse','rider','jump','saddle'], a:1},
+  {emoji:'⛑️', word:'helmet', o:['helmet','saddle','medal','flag'], a:0},
+  {emoji:'🥇', word:'medal', o:['medal','carrot','flag','winner'], a:0},
+  {emoji:'🥕', word:'carrot', o:['carrot','apple','flag','brush'], a:0},
+  {emoji:'🚩', word:'flag', o:['flag','medal','helmet','carrot'], a:0},
+  {emoji:'🐴', word:'pony', o:['pony','horse','rider','saddle'], a:0},
+  {emoji:'🏆', word:'winner', o:['winner','rider','horse','medal'], a:0}
+];
+let revQueue=[], revRound=0, revScore=0, revCovered=9, revItem=null, revLocked=false;
+function revShuffle(arr){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
+function revStart(){
+  revQueue=revShuffle(REVEAL_ITEMS.map((x,i)=>i)).slice(0,6);
+  revRound=0; revScore=0;
+  document.getElementById('revScore').textContent='0';
+  revLoadRound();
+}
+function revLoadRound(){
+  if(revRound>=revQueue.length){
+    document.getElementById('revRound').textContent='Игра окончена!';
+    document.getElementById('revBox').innerHTML='<div class="reveal-emoji">🏆</div>';
+    document.getElementById('revOpts').innerHTML='';
+    document.getElementById('revFeedback').textContent='Твой счёт: '+revScore+' очков. Молодец! 🎉';
+    document.getElementById('revNext').innerHTML='<button class="btn yellow" onclick="revStart()">Играть снова ↺</button>';
+    document.getElementById('revNext').style.display='block';
+    return;
+  }
+  revItem=REVEAL_ITEMS[revQueue[revRound]];
+  revCovered=9; revLocked=false;
+  document.getElementById('revRound').textContent='Раунд '+(revRound+1)+' из '+revQueue.length;
+  document.getElementById('revFeedback').textContent='';
+  document.getElementById('revNext').style.display='none';
+  // box with emoji + tiles
+  const box=document.getElementById('revBox');
+  box.innerHTML='<div class="reveal-emoji">'+revItem.emoji+'</div>';
+  for(let i=0;i<9;i++){
+    const t=document.createElement('div'); t.className='reveal-tile';
+    t.style.left=(i%3)*33.34+'%'; t.style.top=Math.floor(i/3)*33.34+'%';
+    t.onclick=()=>{ t.classList.add('hidden'); revCovered--; sndPop(); };
+    box.appendChild(t);
+  }
+  // options
+  const o=document.getElementById('revOpts'); o.innerHTML='';
+  revItem.o.forEach((opt,oi)=>{
+    const b=document.createElement('button'); b.className='opt'; b.textContent=opt;
+    b.onclick=()=>revGuess(oi,b);
+    o.appendChild(b);
+  });
+}
+function revGuess(oi,btn){
+  if(revLocked) return;
+  revLocked=true;
+  const fb=document.getElementById('revFeedback');
+  const opts=document.getElementById('revOpts').querySelectorAll('.opt');
+  opts.forEach(x=>x.disabled=true);
+  if(oi===revItem.a){
+    const pts = revCovered>=6?3:(revCovered>=3?2:1);
+    revScore+=pts; sndGood();
+    btn.classList.add('correct');
+    fb.textContent='Правильно! Это '+revItem.word+'! +'+pts+' очка 🎉';
+    fb.className='q-feedback good';
+  } else {
+    sndBad();
+    btn.classList.add('wrong');
+    opts[revItem.a].classList.add('correct');
+    fb.textContent='Ой! Это '+revItem.word+'. 💪';
+    fb.className='q-feedback bad';
+  }
+  document.getElementById('revScore').textContent=revScore;
+  // reveal all tiles
+  document.querySelectorAll('#revBox .reveal-tile').forEach(t=>t.classList.add('hidden'));
+  const n=document.getElementById('revNext');
+  n.innerHTML='<button class="btn yellow" onclick="revNextRound()">Дальше →</button>';
+  n.style.display='block';
+}
+function revNextRound(){ revRound++; revLoadRound(); }
+
+/* ================= INIT ================= */
+document.addEventListener('DOMContentLoaded', ()=>{
+  wheelBuild();
+  quizRender();
+  hangmanNew();
+  memoryStart();
+  wsStart();
+  revStart();
+});
+</script>
+</body>
+</html>
