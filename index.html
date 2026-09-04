@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English for Riders — уроки и игры</title>
+<style>
+  :root{
+    --green:#2f7d4f; --greenDark:#1e5c38; --greenSoft:#e3f4e8;
+    --yellow:#ffb300; --blue:#2f6fb2; --ink:#22313f; --card:#ffffff; --muted:#5c6b7a;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  body{
+    margin:0; min-height:100vh;
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    color:var(--ink);
+    background:linear-gradient(160deg,#dff1ff 0%,#eaffdd 60%,#eaffdd 100%);
+    background-attachment:fixed;
+    display:flex; flex-direction:column; align-items:center;
+    padding:24px 16px 40px;
+  }
+  .wrap{max-width:780px;width:100%;}
+  .head{
+    background:var(--card); border-radius:26px; padding:26px 28px; text-align:center;
+    box-shadow:0 10px 30px rgba(31,92,56,.14); border:2px solid #fff; margin-bottom:20px;
+  }
+  .badge{display:inline-block;background:var(--yellow);color:#5a3a00;font-weight:800;padding:6px 14px;border-radius:999px;font-size:13px;letter-spacing:.5px;margin-bottom:10px;}
+  h1{font-size:40px;margin:6px 0 4px;color:var(--greenDark);line-height:1.1;}
+  .sub{font-size:17px;color:var(--muted);margin:4px 0 0;}
+  .emoji-row{font-size:42px;letter-spacing:6px;margin:12px 0 2px;}
+
+  .cards{display:flex;flex-direction:column;gap:16px;}
+  a.card{
+    display:flex; gap:18px; align-items:center; text-decoration:none; color:inherit;
+    background:var(--card); border:2px solid #fff; border-radius:22px; padding:18px 22px;
+    box-shadow:0 8px 22px rgba(31,92,56,.12); transition:.15s;
+  }
+  a.card:hover{transform:translateY(-3px); box-shadow:0 14px 30px rgba(31,92,56,.18);}
+  a.card .ic{font-size:46px; line-height:1;}
+  a.card .t{font-weight:800; font-size:20px; color:var(--greenDark); margin-bottom:3px;}
+  a.card .d{font-size:15px; color:var(--muted); line-height:1.4;}
+  a.card .arrow{margin-left:auto; font-size:26px; color:var(--green); font-weight:800;}
+
+  .note{
+    margin-top:20px; background:#fff; border:2px dashed var(--greenSoft); border-radius:18px;
+    padding:14px 18px; font-size:14px; color:var(--muted); line-height:1.5;
+  }
+  .note b{color:var(--greenDark);}
+  @media (max-width:520px){ h1{font-size:30px;} a.card .ic{font-size:36px;} a.card .t{font-size:17px;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <span class="badge">Конный спорт · английский для детей 8–10 лет</span>
+    <h1>English for Riders 🐎</h1>
+    <p class="sub">Интерактивные уроки и игры для юных всадников</p>
+    <div class="emoji-row">🐎 🏇 🥇</div>
+  </div>
+
+  <div class="cards">
+    <a class="card" href="english_lesson_horses.html">
+      <div class="ic">📖</div>
+      <div>
+        <div class="t">Урок-презентация: конный спорт</div>
+        <div class="d">Разминка, новости, карточки со словами, игра и секреты памяти. 20 минут.</div>
+      </div>
+      <div class="arrow">→</div>
+    </a>
+
+    <a class="card" href="english_lesson_sailing.html">
+      <div class="ic">⛵</div>
+      <div>
+        <div class="t">Урок-презентация: парусный спорт</div>
+        <div class="d">Тот же формат, но морская тематика: wind, wave, boat, captain…</div>
+      </div>
+      <div class="arrow">→</div>
+    </a>
+
+    <a class="card" href="english_games_horses.html">
+      <div class="ic">🎮</div>
+      <div>
+        <div class="t">Игровая: 6 интерактивных игр</div>
+        <div class="d">Викторина с таймером, угадай слово, Memory, колесо фортуны, филворд, «что за картинкой?»</div>
+      </div>
+      <div class="arrow">→</div>
+    </a>
+
+    <a class="card" href="metodichka_english_games.docx">
+      <div class="ic">📘</div>
+      <div>
+        <div class="t">Методичка с играми (скачать)</div>
+        <div class="d">Word-файл: 15 игр, план урока, словарь, фразы педагога. Для печати.</div>
+      </div>
+      <div class="arrow">↓</div>
+    </a>
+  </div>
+
+  <div class="note">
+    <b>Подсказка:</b> если после обновления файлов страница не меняется — нажми <b>Ctrl+F5</b> (или «Обновить, сбрасывая кеш» на телефоне). Играть можно прямо с телефона — всё работает без интернета после загрузки.
+  </div>
+</div>
+</body>
+</html>
